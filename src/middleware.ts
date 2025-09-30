@@ -1,11 +1,12 @@
 import  arcjet, {detectBot, shield, tokenBucket}  from '@arcjet/next';
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 import { request } from 'http';
+import { env } from './data/env';
 
 const isPublicRoute = createRouteMatcher(['/sign-in(.*)', "/"])
 
 const aj = arcjet({
-  key: process.env.ARCJET_KEY!, // твой ключ из .env.local
+  key: env.ARCJET_KEY, // твой ключ из .env.local
   rules: [
     shield({mode: "LIVE"}),
     detectBot({
