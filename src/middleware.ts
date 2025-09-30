@@ -23,7 +23,7 @@ const aj = arcjet({
 
 export default clerkMiddleware(async (auth, req) => {
 
-  const decision = await aj.protect(req,{requested: 5})
+  const decision = await aj.protect(req,{requested: 1})
 
   if(decision.isDenied()){
     return new Response(null, {status: 403})
