@@ -1,19 +1,4 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
-/*
-export const id = uuid().primaryKey().defaultRandom()
-export const createdAt = timestamp({withTimezone: true})
-.notNull()
-.defaultNow()
-export const createdAt = timestamp({ withTimezone: true})
-.notNull()
-.defaultNow()
-.$onUpdate(()=> new Date()) 
-*/
+// schema.prisma
 generator client {
   provider = "prisma-client-js"
 }
@@ -23,11 +8,76 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User{
+enum ExperienceLevel {
+  junior
+  mid
+  senior
+  lead
+}
+
+enum QuestionDifficulty {
+  easy
+  medium
+  hard
+}
+
+model User {
   id        String   @id @default(uuid())
   name      String
-  email   String @unique
-  imageUrl String
+  email     String   @unique
+  imageUrl  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  
+  // Relations
+  jobInfos JobInfo[]
+  
+  @@map("users")
+}
+
+model JobInfo {
+  id              String           @id @default(uuid())
+  title           String?
+  name            String
+  experienceLevel ExperienceLevel
+  description     String
+  userId          String
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  
+  // Relations
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  questions  Question[]
+  interviews Interview[]
+  
+  @@map("job_info")
+}
+
+model Question {
+  id         String            @id @default(uuid())
+  jobInfoId  String
+  text       String
+  difficulty QuestionDifficulty
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+  
+  // Relations
+  jobInfo JobInfo @relation(fields: [jobInfoId], references: [id], onDelete: Cascade)
+  
+  @@map("questions")
+}
+
+model Interview {
+  id         String   @id @default(uuid())
+  jobInfoId  String
+  duration   String
+  humeChatId String?
+  feedback   String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  // Relations
+  jobInfo JobInfo @relation(fields: [jobInfoId], references: [id], onDelete: Cascade)
+  
+  @@map("interviews")
 }
