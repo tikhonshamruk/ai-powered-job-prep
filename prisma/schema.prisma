@@ -4,6 +4,16 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
+/*
+export const id = uuid().primaryKey().defaultRandom()
+export const createdAt = timestamp({withTimezone: true})
+.notNull()
+.defaultNow()
+export const createdAt = timestamp({ withTimezone: true})
+.notNull()
+.defaultNow()
+.$onUpdate(()=> new Date()) 
+*/
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,8 +24,10 @@ datasource db {
 }
 
 model User{
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String?
+  id        String   @id @default(uuid())
+  name      String
+  email   String @unique
+  imageUrl String
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
